@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Treino1</string>
+    <string name="conectar">conectar</string>
+    <string name= "imageView10">imagem10</string>
+    <string name= "imageView6">imagem6</string>
+    <string name= "voltar">voltar</string>
+    <string name= "registrar">registrar</string>
+</resources>
