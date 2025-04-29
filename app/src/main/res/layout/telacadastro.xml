@@ -231,12 +231,13 @@
         tools:ignore="Autofill,EditableContentDescCheck,LabelFor,TouchTargetSizeCheck" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/voltarcadastro"
         android:layout_width="41dp"
         android:layout_height="37dp"
         android:layout_marginTop="40dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/voltar"
+        android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.048"
         app:layout_constraintStart_toStartOf="parent"

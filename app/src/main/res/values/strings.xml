@@ -5,4 +5,5 @@
     <string name= "imageView6">imagem6</string>
     <string name= "voltar">voltar</string>
     <string name= "registrar">registrar</string>
+    <string name="perfil">seu perfil</string>
 </resources>
