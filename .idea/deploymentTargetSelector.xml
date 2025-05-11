@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="Treino1.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-27T17:00:51.212631600Z">
+        <DropdownSelection timestamp="2025-05-02T12:53:26.894162700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\caio\.android\avd\Pixel_7.avd" />

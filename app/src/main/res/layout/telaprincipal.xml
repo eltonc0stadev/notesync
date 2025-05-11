@@ -4,19 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#433367">
-
-    <ImageView
-        android:id="@+id/imageView16"
-        android:layout_width="169dp"
-        android:layout_height="213dp"
-        android:layout_marginTop="124dp"
-        android:clickable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.066"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/nota" />
+    android:background="#433367"
+    tools:layout_editor_absoluteX="-4dp"
+    tools:layout_editor_absoluteY="2dp">
 
     <ImageView
         android:id="@+id/imageView14"
@@ -24,6 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:clickable="true"
+        android:contentDescription="@string/comunidade"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.067"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,6 +28,8 @@
         android:layout_height="34dp"
         android:layout_marginTop="60dp"
         android:clickable="true"
+        android:contentDescription="@string/notificacoes"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +42,8 @@
         android:layout_height="31dp"
         android:layout_marginTop="60dp"
         android:clickable="true"
+        android:contentDescription="@string/lupa"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.957"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,7 +59,8 @@
         app:layout_constraintHorizontal_bias="0.077"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/favoritos" />
+        app:srcCompat="@drawable/favoritos"
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/imageView21"
@@ -71,6 +68,7 @@
         android:layout_height="27dp"
         android:layout_marginTop="124dp"
         android:clickable="true"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.077"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +81,7 @@
         android:layout_height="27dp"
         android:layout_marginTop="124dp"
         android:clickable="true"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.367"
         app:layout_constraintStart_toStartOf="parent"
@@ -94,6 +93,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="72dp"
+        android:clickable="true"
+        android:contentDescription="@string/criarnota"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.893"
@@ -127,23 +129,12 @@
         app:layout_constraintVertical_bias="0.375" />
 
     <TextView
-        android:id="@+id/textView17"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Nota"
-        app:layout_constraintEnd_toEndOf="@+id/imageView16"
-        app:layout_constraintHorizontal_bias="0.158"
-        app:layout_constraintStart_toStartOf="@+id/imageView16"
-        app:layout_constraintTop_toTopOf="@+id/imageView16" />
-
-    <TextView
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="104dp"
         android:contentDescription="@string/perfil"
-        android:text="seu perfil"
+        android:text="@string/perfil"
         android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -155,10 +146,17 @@
         android:layout_width="70dp"
         android:layout_height="76dp"
         android:layout_marginBottom="72dp"
+        android:clickable="true"
+        android:contentDescription="@string/perfil"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.123"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/perfilicone" />
+    <include
+        layout="@layout/gruponota"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="54dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

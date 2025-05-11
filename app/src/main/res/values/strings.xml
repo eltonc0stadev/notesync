@@ -1,9 +1,22 @@
 <resources>
-    <string name="app_name">Treino1</string>
+    <string name="app_name">Treino!</string>
     <string name="conectar">conectar</string>
     <string name= "imageView10">imagem10</string>
     <string name= "imageView6">imagem6</string>
     <string name= "voltar">voltar</string>
     <string name= "registrar">registrar</string>
-    <string name="perfil">seu perfil</string>
+    <string name="logo">Logo</string>
+    <string name="login">login</string>
+    <string name="npuc">não possui uma conta?</string>
+    <string name="cadastrese">Cadastre-se aqui</string>
+    <string name="esqueceu">Esqueceu a senha?</string>
+    <string name="conectse">Ou Conect-se Com:</string>
+    <string name="comunidade">comunidade</string>
+    <string name="tema">temacor</string>
+    <string name="titulo">Título</string>
+    <string name="digite">Escreva aqui</string>
+    <string name="notificacoes">notificações</string>
+    <string name="lupa">pesquisa</string>
+    <string name="criarnota">crianota</string>
+    <string name="perfil">Seu Perfil</string>
 </resources>
