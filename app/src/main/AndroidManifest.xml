@@ -25,7 +25,8 @@
         <!-- Telacadastro Activity -->
         <activity android:name=".Telacadastro" />
         <activity android:name=".Janelaprincipal"/>
-
+        <activity android:name=".Telanota"/>
+        <activity android:name=".Telaperfil"/>
     </application>
 
 </manifest>

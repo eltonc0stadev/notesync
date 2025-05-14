@@ -142,7 +142,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView33"
+        android:id="@+id/iconeperfil"
         android:layout_width="70dp"
         android:layout_height="76dp"
         android:layout_marginBottom="72dp"
@@ -155,6 +155,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/perfilicone" />
     <include
+        android:id="@+id/include_grupo_nota"
         layout="@layout/gruponota"
         android:layout_marginTop="16dp"
         android:layout_marginStart="54dp"/>

@@ -19,4 +19,8 @@
     <string name="lupa">pesquisa</string>
     <string name="criarnota">crianota</string>
     <string name="perfil">Seu Perfil</string>
+    <string name="phone">Seu telefone</string>
+    <string name="Amigos">Amigos</string>
+    <string name="Email">Email</string>
+    <string name="changepass">Mude sua Senha</string>
 </resources>
