@@ -7,10 +7,10 @@
     <string name= "registrar">registrar</string>
     <string name="logo">Logo</string>
     <string name="login">login</string>
-    <string name="npuc">não possui uma conta?</string>
+    <string name="npuc">Não possui uma conta?</string>
     <string name="cadastrese">Cadastre-se aqui</string>
     <string name="esqueceu">Esqueceu a senha?</string>
-    <string name="conectse">Ou Conect-se Com:</string>
+    <string name="conectse">Ou Conecte-se Com:</string>
     <string name="comunidade">comunidade</string>
     <string name="tema">temacor</string>
     <string name="titulo">Título</string>
