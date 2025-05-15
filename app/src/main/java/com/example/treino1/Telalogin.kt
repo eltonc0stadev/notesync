@@ -23,7 +23,7 @@ class Telalogin : AppCompatActivity() {
         val botaoConectar = findViewById<ImageView>(R.id.conectar)
 
         botaoConectar.setOnClickListener {
-            val intent = Intent(this, Janelaprincipal::class.java)
+            val intent = Intent(this, Telaprincipal::class.java)
             startActivity(intent)
         }
     }

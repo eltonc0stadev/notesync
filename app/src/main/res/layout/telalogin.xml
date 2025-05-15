@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#171F25"
-    tools:context=".Janelaprincipal"
+    tools:context=".Telaprincipal"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="57dp">
 
@@ -94,79 +94,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.864" />
-
-    <ImageView
-        android:id="@+id/emaillogin"
-        android:layout_width="352dp"
-        android:layout_height="261dp"
-        android:contentDescription="@string/login"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.511"
-        app:srcCompat="@drawable/emaillogin" />
-
-    <ImageView
-        android:id="@+id/senhalogin"
-        android:layout_width="351dp"
-        android:layout_height="159dp"
-        android:contentDescription="@string/login"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6"
-        app:srcCompat="@drawable/senhalogin" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="272dp"
-        android:layout_height="274dp"
-        android:contentDescription="@string/logo"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.093"
-        app:srcCompat="@drawable/logo" />
-
-    <EditText
-        android:id="@+id/editTextText4"
-        android:layout_width="269dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="116dp"
-        android:background="@android:color/transparent"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="@+id/emaillogin"
-        app:layout_constraintEnd_toEndOf="@+id/emaillogin"
-        app:layout_constraintHorizontal_bias="0.506"
-        app:layout_constraintStart_toStartOf="@+id/emaillogin"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4"
-        app:layout_constraintVertical_bias="0.033"
-        tools:ignore="Autofill,LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-    <EditText
-        android:id="@+id/editTextText9"
-        android:layout_width="269dp"
-        android:layout_height="25dp"
-        android:layout_marginBottom="48dp"
-        android:autofillHints="ignore"
-        android:background="@android:color/transparent"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="@+id/emaillogin"
-        app:layout_constraintEnd_toEndOf="@+id/senhalogin"
-        app:layout_constraintStart_toStartOf="@+id/senhalogin"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText4"
-        app:layout_constraintVertical_bias="1.0"
-        tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <!--android:onClick=""(na função a cima)-->
 
