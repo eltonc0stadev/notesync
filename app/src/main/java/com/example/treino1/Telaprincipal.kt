@@ -60,10 +60,10 @@ class Telaprincipal : AppCompatActivity() {
         val tituloSalvo = lerTituloDoArquivo("titulo.txt")
 
         val textoLimitado = if (tituloSalvo.length > 20) {
-            textTituloPrincipal.textSize = 14f
+            textTituloPrincipal.textSize = 16f
             tituloSalvo.substring(0, 20) + "..."
         } else {
-            textTituloPrincipal.textSize = 15f
+            textTituloPrincipal.textSize = 17f
             tituloSalvo
         }
 
