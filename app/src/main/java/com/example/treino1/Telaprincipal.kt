@@ -58,7 +58,16 @@ class Telaprincipal : AppCompatActivity() {
         val textTituloPrincipal = findViewById<TextView>(R.id.TituloPrincipal)
 
         val tituloSalvo = lerTituloDoArquivo("titulo.txt")
-        textTituloPrincipal.text = tituloSalvo
+
+        val textoLimitado = if (tituloSalvo.length > 20) {
+            textTituloPrincipal.textSize = 14f
+            tituloSalvo.substring(0, 20) + "..."
+        } else {
+            textTituloPrincipal.textSize = 15f
+            tituloSalvo
+        }
+
+        textTituloPrincipal.text = textoLimitado
     }
 
     private fun lerTituloDoArquivo(nomeArquivo: String): String {

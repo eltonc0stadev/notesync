@@ -99,7 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="68dp"
         android:text="TextView"
-        android:textSize="24sp"
+        android:textSize="11sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/bloconota"
         app:layout_constraintEnd_toEndOf="@+id/bloconota"
