@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#433367"
+    android:background="@color/beige"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="36dp">
 
@@ -95,16 +95,18 @@
 
     <EditText
         android:id="@+id/editTextText3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="152dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="160dp"
+        android:autofillHints="name"
         android:background="@android:color/transparent"
         android:ems="10"
         android:hint="@string/digite"
-        android:inputType="text"
-        android:autofillHints="name"
+        android:inputType="textMultiLine"
+        android:gravity="top|start"
+        android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.079"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

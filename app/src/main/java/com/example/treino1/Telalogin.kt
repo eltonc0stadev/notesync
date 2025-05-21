@@ -11,7 +11,6 @@ import kotlin.jvm.java
 class Telalogin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.telalogin)
 
         val botaoConfirmar = findViewById<TextView>(R.id.cadastrobuttom)

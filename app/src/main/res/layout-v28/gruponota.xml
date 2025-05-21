@@ -100,7 +100,7 @@
         android:layout_marginBottom="68dp"
         android:text="TextView"
         android:textSize="24sp"
-        android:textStyle="bold"
+        android:textFontWeight="700"
         app:layout_constraintBottom_toBottomOf="@+id/bloconota"
         app:layout_constraintEnd_toEndOf="@+id/bloconota"
         app:layout_constraintHorizontal_bias="0.488"
