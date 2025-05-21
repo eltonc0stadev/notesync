@@ -31,6 +31,12 @@ class Telaprincipal : AppCompatActivity() {
         botaoAdicionarNota.setOnClickListener {
             criarNovaNota()
         }
+        val perfil = findViewById<ImageView>(R.id.iconeperfil)
+
+        perfil.setOnClickListener {
+            val intent = Intent(this,Telaperfil::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun criarNovaNota() {
@@ -105,4 +111,5 @@ class Telaprincipal : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
 }

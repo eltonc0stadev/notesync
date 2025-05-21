@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffe4c4"
+    android:id="@+id/layout"
     tools:layout_editor_absoluteX="-4dp"
     tools:layout_editor_absoluteY="2dp">
-
     <ImageView
-        android:id="@+id/imageView14"
+        android:id="@+id/comunidade"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
@@ -173,5 +173,29 @@
         app:layout_constraintHorizontal_bias="0.123"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/perfilicone" />
+
+    <ImageView
+        android:id="@+id/temachange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.233"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/tema" />
+
+    <ImageView
+        android:id="@+id/trash"
+        android:layout_width="32dp"
+        android:layout_height="23dp"
+        android:layout_marginBottom="72dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.701"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/trash" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
