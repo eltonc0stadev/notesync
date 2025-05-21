@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 import java.io.IOException
 
 class Telanota : AppCompatActivity() {
@@ -78,16 +79,22 @@ class Telanota : AppCompatActivity() {
             }
             setResult(RESULT_OK, intent)
             finish()
-        } else {
-
         }
     }
 
     private fun salvarNota(nomeArquivo: String, titulo: String, conteudo: String) {
         try {
-            openFileOutput(nomeArquivo, MODE_PRIVATE).use {
-                it.write((titulo + "\n" + conteudo).toByteArray())
-            }
+            val arquivo = File(filesDir, nomeArquivo)
+            val linhasAtuais = if (arquivo.exists()) arquivo.readLines().toMutableList() else mutableListOf()
+
+            val favoritado = linhasAtuais.any { it.trim().equals("#FAVORITO=true", ignoreCase = true) }
+
+            val novaNota = mutableListOf<String>()
+            novaNota.add(titulo)
+            novaNota.add(conteudo)
+            if (favoritado) novaNota.add("#FAVORITO=true")
+
+            arquivo.writeText(novaNota.joinToString("\n"))
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -97,7 +104,10 @@ class Telanota : AppCompatActivity() {
         return try {
             val linhas = openFileInput(nomeArquivo).bufferedReader().readLines()
             val titulo = linhas.firstOrNull() ?: ""
-            val conteudo = linhas.drop(1).joinToString("\n")
+            val conteudo = linhas
+                .drop(1)
+                .filterNot { it.trim().startsWith("#FAVORITO") }
+                .joinToString("\n")
             titulo to conteudo
         } catch (e: Exception) {
             "" to ""

@@ -9,13 +9,15 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 
 class Telaprincipal : AppCompatActivity() {
 
     private lateinit var containerNotas: GridLayout
+    private var filtroAtivo = false
 
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        carregarNotasSalvas()
+        carregarNotas()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,38 +28,46 @@ class Telaprincipal : AppCompatActivity() {
         containerNotas = findViewById(R.id.containerNotas)
         val botaoAdicionarNota = findViewById<ImageView>(R.id.imageView20)
 
-        carregarNotasSalvas()
+        carregarNotas()
 
         botaoAdicionarNota.setOnClickListener {
             criarNovaNota()
         }
-        val perfil = findViewById<ImageView>(R.id.iconeperfil)
 
+        val perfil = findViewById<ImageView>(R.id.iconeperfil)
         perfil.setOnClickListener {
-            val intent = Intent(this,Telaperfil::class.java)
+            val intent = Intent(this, Telaperfil::class.java)
             startActivity(intent)
         }
+
+        val filtroFavorito = findViewById<ImageView>(R.id.FiltroFavorito)
+        filtroFavorito.setOnClickListener {
+            filtroAtivo = !filtroAtivo
+            carregarNotas()
+            filtroFavorito.alpha = if (filtroAtivo) 1.0f else 0.5f
+        }
+
+        filtroFavorito.alpha = 0.5f
     }
 
     private fun criarNovaNota() {
         val nomeArquivoNota = "nota_${System.currentTimeMillis()}.txt"
-
-        salvarNota(nomeArquivoNota, "", "")
-
+        salvarNota(nomeArquivoNota, "", "", false)
         val intent = Intent(this, Telanota::class.java)
         intent.putExtra("nomeArquivo", nomeArquivoNota)
         launcher.launch(intent)
     }
 
-    private fun carregarNotasSalvas() {
+    private fun carregarNotas() {
         containerNotas.removeAllViews()
-
         val arquivos = filesDir.listFiles() ?: return
-
         val arquivosNotas = arquivos.filter { it.name.startsWith("nota_") && it.name.endsWith(".txt") }
 
         for (arquivo in arquivosNotas) {
-            adicionarNotaNaTela(arquivo.name)
+            val nome = arquivo.name
+            if (!filtroAtivo || lerFavoritoDaNota(nome)) {
+                adicionarNotaNaTela(nome)
+            }
         }
     }
 
@@ -65,11 +75,7 @@ class Telaprincipal : AppCompatActivity() {
         val inflater = LayoutInflater.from(this)
         val novaNota = inflater.inflate(R.layout.gruponota, containerNotas, false)
 
-        var tituloNota = lerTituloDaNota(nomeArquivoNota)
-        if (tituloNota.isBlank()) {
-            tituloNota = "Sem título"
-        }
-
+        val tituloNota = lerTituloDaNota(nomeArquivoNota).ifBlank { "Sem título" }
         val textTituloNota = novaNota.findViewById<TextView>(R.id.TituloPrincipal)
         val textoLimitado = if (tituloNota.length > 20) {
             textTituloNota.textSize = 16f
@@ -87,6 +93,30 @@ class Telaprincipal : AppCompatActivity() {
             launcher.launch(intent)
         }
 
+        val favoritoEmpty = novaNota.findViewById<ImageView>(R.id.favoritoempty)
+        val favoritoSelecionado = novaNota.findViewById<ImageView>(R.id.favselecionado)
+
+        val estaFavoritado = lerFavoritoDaNota(nomeArquivoNota)
+        if (estaFavoritado) {
+            favoritoEmpty.visibility = ImageView.INVISIBLE
+            favoritoSelecionado.visibility = ImageView.VISIBLE
+        } else {
+            favoritoEmpty.visibility = ImageView.VISIBLE
+            favoritoSelecionado.visibility = ImageView.INVISIBLE
+        }
+
+        favoritoEmpty.setOnClickListener {
+            favoritoEmpty.visibility = ImageView.INVISIBLE
+            favoritoSelecionado.visibility = ImageView.VISIBLE
+            atualizarFavorito(nomeArquivoNota, true)
+        }
+
+        favoritoSelecionado.setOnClickListener {
+            favoritoSelecionado.visibility = ImageView.INVISIBLE
+            favoritoEmpty.visibility = ImageView.VISIBLE
+            atualizarFavorito(nomeArquivoNota, false)
+        }
+
         val layoutParams = GridLayout.LayoutParams().apply {
             width = 0
             height = GridLayout.LayoutParams.WRAP_CONTENT
@@ -97,7 +127,6 @@ class Telaprincipal : AppCompatActivity() {
         containerNotas.addView(novaNota)
     }
 
-
     private fun lerTituloDaNota(nomeArquivo: String): String {
         return try {
             val linhas = openFileInput(nomeArquivo).bufferedReader().readLines()
@@ -107,14 +136,41 @@ class Telaprincipal : AppCompatActivity() {
         }
     }
 
-    private fun salvarNota(nomeArquivo: String, titulo: String, conteudo: String) {
+    private fun lerFavoritoDaNota(nomeArquivo: String): Boolean {
+        return try {
+            val linhas = openFileInput(nomeArquivo).bufferedReader().readLines()
+            linhas.any { it.trim().equals("#FAVORITO=true", ignoreCase = true) }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun salvarNota(nomeArquivo: String, titulo: String, conteudo: String, favorito: Boolean) {
         try {
             openFileOutput(nomeArquivo, MODE_PRIVATE).use {
-                it.write((titulo + "\n" + conteudo).toByteArray())
+                val favoritoTag = if (favorito) "\n#FAVORITO=true" else ""
+                it.write((titulo + "\n" + conteudo + favoritoTag).toByteArray())
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
+    private fun atualizarFavorito(nomeArquivo: String, favoritar: Boolean) {
+        try {
+            val arquivo = File(filesDir, nomeArquivo)
+            if (!arquivo.exists()) return
+
+            val linhas = arquivo.readLines().toMutableList()
+            linhas.removeAll { it.trim().startsWith("#FAVORITO") }
+
+            if (favoritar) {
+                linhas.add("#FAVORITO=true")
+            }
+
+            arquivo.writeText(linhas.joinToString("\n"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
