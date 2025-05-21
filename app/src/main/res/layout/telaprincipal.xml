@@ -92,15 +92,33 @@
         android:id="@+id/imageView20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="72dp"
+        android:layout_marginBottom="44dp"
         android:clickable="true"
         android:contentDescription="@string/criarnota"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.893"
+        app:layout_constraintHorizontal_bias="0.911"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/mais" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/imageView21"
+        app:layout_constraintBottom_toTopOf="@id/imageView20">
+
+        <GridLayout
+            android:id="@+id/containerNotas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:useDefaultMargins="true" />
+    </ScrollView>
+
 
     <TextView
         android:id="@+id/textView8"
@@ -132,20 +150,20 @@
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="104dp"
+        android:layout_marginBottom="72dp"
         android:contentDescription="@string/perfil"
         android:text="@string/perfil"
         android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.359"
+        app:layout_constraintHorizontal_bias="0.376"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/iconeperfil"
         android:layout_width="70dp"
         android:layout_height="76dp"
-        android:layout_marginBottom="72dp"
+        android:layout_marginBottom="48dp"
         android:clickable="true"
         android:contentDescription="@string/perfil"
         android:focusable="true"
@@ -154,10 +172,5 @@
         app:layout_constraintHorizontal_bias="0.123"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/perfilicone" />
-    <include
-        android:id="@+id/include_grupo_nota"
-        layout="@layout/gruponota"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="54dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

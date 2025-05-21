@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.ImageButton
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import java.io.*
 
@@ -14,67 +13,60 @@ class Telanota : AppCompatActivity() {
 
     private lateinit var anotacao: EditText
     private lateinit var titulo: EditText
-
-    val tituloFile = "titulo.txt"
-    val anotacaoFile = "anotacao.txt"
+    private var nomeArquivo: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.telanota)
-
-        val voltar = findViewById<ImageButton>(R.id.voltarnota)
-
-        voltar.setOnClickListener {
-            val intent = Intent(this, Telaprincipal::class.java)
-            startActivity(intent)
-        }
 
         anotacao = findViewById(R.id.editTextText3)
         titulo = findViewById(R.id.Texttitulo)
 
-        titulo.setText(readFromFile(tituloFile))
-        anotacao.setText(readFromFile(anotacaoFile))
+        nomeArquivo = intent.getStringExtra("nomeArquivo") ?: "nota_padrao.txt"
 
-        titulo.addTextChangedListener(object : TextWatcher {
+        val voltar = findViewById<ImageButton>(R.id.voltarnota)
+        voltar.setOnClickListener {
+            val intent = Intent()
+            intent.putExtra("nomeArquivo", nomeArquivo)
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+
+        val (tituloSalvo, anotacaoSalva) = lerNota(nomeArquivo)
+        titulo.setText(tituloSalvo)
+        anotacao.setText(anotacaoSalva)
+
+        val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                saveToFile(tituloFile, s.toString())
+                salvarNota(nomeArquivo, titulo.text.toString(), anotacao.text.toString())
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        }
 
-        anotacao.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                saveToFile(anotacaoFile, s.toString())
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        titulo.addTextChangedListener(textWatcher)
+        anotacao.addTextChangedListener(textWatcher)
     }
 
-    private fun saveToFile(filename: String, content: String) {
+    private fun salvarNota(nomeArquivo: String, titulo: String, conteudo: String) {
         try {
-            openFileOutput(filename, MODE_PRIVATE).use {
-                it.write(content.toByteArray())
+            openFileOutput(nomeArquivo, MODE_PRIVATE).use {
+                it.write((titulo + "\n" + conteudo).toByteArray())
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
 
-    private fun readFromFile(filename: String): String {
+    private fun lerNota(nomeArquivo: String): Pair<String, String> {
         return try {
-            openFileInput(filename).bufferedReader().useLines { lines ->
-                lines.joinToString("\n")
-            }
-        } catch (e: FileNotFoundException) {
-            ""
-        } catch (e: IOException) {
-            e.printStackTrace()
-            ""
+            val linhas = openFileInput(nomeArquivo).bufferedReader().readLines()
+            val titulo = linhas.firstOrNull() ?: ""
+            val conteudo = linhas.drop(1).joinToString("\n")
+            titulo to conteudo
+        } catch (e: Exception) {
+            "" to ""
         }
     }
 }
