@@ -6,8 +6,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import java.io.*
+import java.io.IOException
 
 class Telanota : AppCompatActivity() {
 
@@ -21,7 +23,6 @@ class Telanota : AppCompatActivity() {
 
         anotacao = findViewById(R.id.editTextText3)
         titulo = findViewById(R.id.Texttitulo)
-
         nomeArquivo = intent.getStringExtra("nomeArquivo") ?: "nota_padrao.txt"
 
         val voltar = findViewById<ImageButton>(R.id.voltarnota)
@@ -32,6 +33,11 @@ class Telanota : AppCompatActivity() {
             finish()
         }
 
+        val botaoTrash = findViewById<ImageView>(R.id.trash)
+        botaoTrash.setOnClickListener {
+            mostrarDialogoConfirmacaoApagar()
+        }
+
         val (tituloSalvo, anotacaoSalva) = lerNota(nomeArquivo)
         titulo.setText(tituloSalvo)
         anotacao.setText(anotacaoSalva)
@@ -40,13 +46,41 @@ class Telanota : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 salvarNota(nomeArquivo, titulo.text.toString(), anotacao.text.toString())
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
 
         titulo.addTextChangedListener(textWatcher)
         anotacao.addTextChangedListener(textWatcher)
+    }
+
+    private fun mostrarDialogoConfirmacaoApagar() {
+        AlertDialog.Builder(this)
+            .setTitle("Excluir nota")
+            .setMessage("Tem certeza que deseja apagar esta nota?")
+            .setPositiveButton("Sim") { dialog, _ ->
+                apagarNota()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Não") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun apagarNota() {
+        val apagou = deleteFile(nomeArquivo)
+        if (apagou) {
+            val intent = Intent().apply {
+                putExtra("notaApagada", true)
+                putExtra("nomeArquivo", nomeArquivo)
+            }
+            setResult(RESULT_OK, intent)
+            finish()
+        } else {
+
+        }
     }
 
     private fun salvarNota(nomeArquivo: String, titulo: String, conteudo: String) {

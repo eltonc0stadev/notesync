@@ -42,7 +42,7 @@ class Telaprincipal : AppCompatActivity() {
     private fun criarNovaNota() {
         val nomeArquivoNota = "nota_${System.currentTimeMillis()}.txt"
 
-        salvarNota(nomeArquivoNota, "Nova Nota", "")
+        salvarNota(nomeArquivoNota, "", "")
 
         val intent = Intent(this, Telanota::class.java)
         intent.putExtra("nomeArquivo", nomeArquivoNota)
@@ -65,7 +65,11 @@ class Telaprincipal : AppCompatActivity() {
         val inflater = LayoutInflater.from(this)
         val novaNota = inflater.inflate(R.layout.gruponota, containerNotas, false)
 
-        val tituloNota = lerTituloDaNota(nomeArquivoNota)
+        var tituloNota = lerTituloDaNota(nomeArquivoNota)
+        if (tituloNota.isBlank()) {
+            tituloNota = "Sem título"
+        }
+
         val textTituloNota = novaNota.findViewById<TextView>(R.id.TituloPrincipal)
         val textoLimitado = if (tituloNota.length > 20) {
             textTituloNota.textSize = 16f
@@ -93,12 +97,13 @@ class Telaprincipal : AppCompatActivity() {
         containerNotas.addView(novaNota)
     }
 
+
     private fun lerTituloDaNota(nomeArquivo: String): String {
         return try {
             val linhas = openFileInput(nomeArquivo).bufferedReader().readLines()
-            linhas.firstOrNull() ?: "Nova Nota"
+            linhas.firstOrNull() ?: ""
         } catch (e: Exception) {
-            "Nova Nota"
+            ""
         }
     }
 
