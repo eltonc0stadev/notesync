@@ -2,7 +2,11 @@ package com.example.treino1
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,6 +20,13 @@ class Telaprincipal : AppCompatActivity() {
     private lateinit var containerNotas: GridLayout
     private var filtroAtivo = false
 
+    private lateinit var iconeComunidade: ImageView
+    private lateinit var iconeTemaChange: ImageView
+    private lateinit var iconeNotificacao: ImageView
+    private lateinit var lupaPesquisa: ImageView
+    private lateinit var barraPesquisa: EditText
+    private lateinit var filtroFavorito: ImageView
+
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         carregarNotas()
     }
@@ -27,6 +38,13 @@ class Telaprincipal : AppCompatActivity() {
 
         containerNotas = findViewById(R.id.containerNotas)
         val botaoAdicionarNota = findViewById<ImageView>(R.id.imageView20)
+        iconeComunidade = findViewById(R.id.comunidade)
+        iconeTemaChange = findViewById(R.id.temachange)
+        iconeNotificacao = findViewById(R.id.imageView13)
+        lupaPesquisa = findViewById(R.id.Pesquisa)
+        filtroFavorito = findViewById(R.id.FiltroFavorito)
+        barraPesquisa = findViewById(R.id.campoPesquisa)
+        barraPesquisa.visibility = View.GONE
 
         carregarNotas()
 
@@ -40,14 +58,37 @@ class Telaprincipal : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val filtroFavorito = findViewById<ImageView>(R.id.FiltroFavorito)
         filtroFavorito.setOnClickListener {
             filtroAtivo = !filtroAtivo
-            carregarNotas()
             filtroFavorito.alpha = if (filtroAtivo) 1.0f else 0.5f
+            carregarNotas(barraPesquisa.text.toString())
+        }
+        filtroFavorito.alpha = 0.5f
+
+        lupaPesquisa.setOnClickListener {
+            if (barraPesquisa.visibility == View.GONE) {
+                barraPesquisa.visibility = View.VISIBLE
+                barraPesquisa.requestFocus()
+                iconeComunidade.visibility = View.INVISIBLE
+                iconeTemaChange.visibility = View.INVISIBLE
+                iconeNotificacao.visibility = View.INVISIBLE
+            } else {
+                barraPesquisa.setText("")
+                barraPesquisa.visibility = View.GONE
+                iconeComunidade.visibility = View.VISIBLE
+                iconeTemaChange.visibility = View.VISIBLE
+                iconeNotificacao.visibility = View.VISIBLE
+                carregarNotas()
+            }
         }
 
-        filtroFavorito.alpha = 0.5f
+        barraPesquisa.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                carregarNotas(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     private fun criarNovaNota() {
@@ -58,14 +99,18 @@ class Telaprincipal : AppCompatActivity() {
         launcher.launch(intent)
     }
 
-    private fun carregarNotas() {
+    private fun carregarNotas(filtroTexto: String = "") {
         containerNotas.removeAllViews()
         val arquivos = filesDir.listFiles() ?: return
         val arquivosNotas = arquivos.filter { it.name.startsWith("nota_") && it.name.endsWith(".txt") }
 
         for (arquivo in arquivosNotas) {
             val nome = arquivo.name
-            if (!filtroAtivo || lerFavoritoDaNota(nome)) {
+            val titulo = lerTituloDaNota(nome)
+            val passaFiltroFavorito = !filtroAtivo || lerFavoritoDaNota(nome)
+            val passaFiltroTexto = filtroTexto.isBlank() || titulo.contains(filtroTexto, ignoreCase = true)
+
+            if (passaFiltroFavorito && passaFiltroTexto) {
                 adicionarNotaNaTela(nome)
             }
         }
@@ -98,22 +143,22 @@ class Telaprincipal : AppCompatActivity() {
 
         val estaFavoritado = lerFavoritoDaNota(nomeArquivoNota)
         if (estaFavoritado) {
-            favoritoEmpty.visibility = ImageView.INVISIBLE
-            favoritoSelecionado.visibility = ImageView.VISIBLE
+            favoritoEmpty.visibility = View.INVISIBLE
+            favoritoSelecionado.visibility = View.VISIBLE
         } else {
-            favoritoEmpty.visibility = ImageView.VISIBLE
-            favoritoSelecionado.visibility = ImageView.INVISIBLE
+            favoritoEmpty.visibility = View.VISIBLE
+            favoritoSelecionado.visibility = View.INVISIBLE
         }
 
         favoritoEmpty.setOnClickListener {
-            favoritoEmpty.visibility = ImageView.INVISIBLE
-            favoritoSelecionado.visibility = ImageView.VISIBLE
+            favoritoEmpty.visibility = View.INVISIBLE
+            favoritoSelecionado.visibility = View.VISIBLE
             atualizarFavorito(nomeArquivoNota, true)
         }
 
         favoritoSelecionado.setOnClickListener {
-            favoritoSelecionado.visibility = ImageView.INVISIBLE
-            favoritoEmpty.visibility = ImageView.VISIBLE
+            favoritoSelecionado.visibility = View.INVISIBLE
+            favoritoEmpty.visibility = View.VISIBLE
             atualizarFavorito(nomeArquivoNota, false)
         }
 

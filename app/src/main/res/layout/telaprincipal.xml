@@ -9,47 +9,79 @@
     tools:layout_editor_absoluteX="-4dp"
     tools:layout_editor_absoluteY="2dp">
 
-    <ImageView
-        android:id="@+id/comunidade"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:clickable="true"
-        android:contentDescription="@string/comunidade"
-        android:focusable="true"
+        android:layout_marginTop="48dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.067"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/comunidade" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/imageView13"
-        android:layout_width="35dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="60dp"
-        android:clickable="true"
-        android:contentDescription="@string/notificacoes"
-        android:focusable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.51"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/notificacao" />
+        <ImageView
+            android:id="@+id/comunidade"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/comunidade"
+            android:src="@drawable/comunidade"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="36dp"
-        android:layout_height="31dp"
-        android:layout_marginTop="60dp"
-        android:clickable="true"
-        android:contentDescription="@string/lupa"
-        android:focusable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.957"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/lero" />
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/notificacoes"
+            android:src="@drawable/notificacao"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/comunidade"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/temachange"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="Tema"
+            android:src="@drawable/tema"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageView13"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <EditText
+            android:id="@+id/campoPesquisa"
+            android:layout_width="320dp"
+            android:layout_height="40dp"
+            android:background="#FFFFFFFF"
+            android:hint="Pesquisar..."
+            android:inputType="text"
+            android:padding="6dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/darker_gray"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/Pesquisa"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/Pesquisa"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/lupa"
+            android:src="@drawable/lero"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <FrameLayout
         android:id="@+id/botaoFiltroFavorito"
@@ -140,16 +172,5 @@
         app:layout_constraintHorizontal_bias="0.123"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/perfilicone" />
-
-    <ImageView
-        android:id="@+id/temachange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.233"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/tema" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
