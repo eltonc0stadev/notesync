@@ -23,8 +23,6 @@ class Telanota : AppCompatActivity() {
     private lateinit var comunidade: ImageView
     private lateinit var temachange: ImageView
     private lateinit var notificacao: ImageView
-    private lateinit var campoPesquisa: EditText
-    private lateinit var botaoPesquisa: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +35,6 @@ class Telanota : AppCompatActivity() {
         comunidade = findViewById(R.id.comunidade)
         temachange = findViewById(R.id.temachange)
         notificacao = findViewById(R.id.imageView13)
-        campoPesquisa = findViewById(R.id.campoPesquisa)
-        botaoPesquisa = findViewById(R.id.Pesquisa)
 
         val voltar = findViewById<ImageButton>(R.id.voltarnota)
         voltar.setOnClickListener {
@@ -67,27 +63,6 @@ class Telanota : AppCompatActivity() {
 
         titulo.addTextChangedListener(textWatcher)
         anotacao.addTextChangedListener(textWatcher)
-
-        botaoPesquisa.setOnClickListener {
-            if (campoPesquisa.visibility == View.VISIBLE) {
-                campoPesquisa.visibility = View.GONE
-                comunidade.visibility = View.VISIBLE
-                temachange.visibility = View.VISIBLE
-                notificacao.visibility = View.VISIBLE
-
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(campoPesquisa.windowToken, 0)
-            } else {
-                campoPesquisa.visibility = View.VISIBLE
-                comunidade.visibility = View.GONE
-                temachange.visibility = View.GONE
-                notificacao.visibility = View.GONE
-                campoPesquisa.requestFocus()
-
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(campoPesquisa, InputMethodManager.SHOW_IMPLICIT)
-            }
-        }
     }
 
     private fun mostrarDialogoConfirmacaoApagar() {
