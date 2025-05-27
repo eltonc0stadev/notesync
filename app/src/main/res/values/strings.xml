@@ -24,4 +24,7 @@
     <string name="Email">Email</string>
     <string name="changepass">Mude sua Senha</string>
     <string name="passwordlogin">Senha</string>
+    <string name="msgteste">Mensagem</string>
+    <string name="pesquisar">Pesquisar</string>
+    <string name="favoritos">Favoritos</string>
 </resources>
