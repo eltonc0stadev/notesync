@@ -10,10 +10,16 @@ import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.io.File
+import java.io.IOException
 
 class Telaprincipal : AppCompatActivity() {
 
@@ -94,6 +100,7 @@ class Telaprincipal : AppCompatActivity() {
     private fun criarNovaNota() {
         val nomeArquivoNota = "nota_${System.currentTimeMillis()}.txt"
         salvarNota(nomeArquivoNota, "", "", false)
+        enviarNotaParaApi(nomeArquivoNota)
         val intent = Intent(this, Telanota::class.java)
         intent.putExtra("nomeArquivo", nomeArquivoNota)
         launcher.launch(intent)
@@ -217,5 +224,59 @@ class Telaprincipal : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun enviarNotaParaApi(nomeArquivo: String) {
+        val jwtToken = getSharedPreferences("auth", MODE_PRIVATE).getString("jwt", "") ?: ""
+        if (jwtToken.isBlank()) {
+            runOnUiThread {
+                Toast.makeText(this, "Token JWT não encontrado", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
+        val linhas = try {
+            openFileInput(nomeArquivo).bufferedReader().readLines()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return
+        }
+
+        val titulo = linhas.firstOrNull() ?: ""
+        val conteudo = linhas.drop(1).filterNot { it.startsWith("#FAVORITO") }.joinToString("\n")
+        val favorito = linhas.any { it.trim().equals("#FAVORITO=true", ignoreCase = true) }
+
+        val jsonBody = JSONObject().apply {
+            put("titulo", titulo)
+            put("conteudo", conteudo)
+            put("favorito", favorito)
+        }
+
+        val requestBody = jsonBody.toString()
+            .toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        val request = Request.Builder()
+            .url("https://suaapi.com/notas")
+            .addHeader("Authorization", "Bearer $jwtToken")
+            .post(requestBody)
+            .build()
+
+        OkHttpClient().newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(this@Telaprincipal, "Erro ao enviar nota", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@Telaprincipal, "Nota enviada com sucesso!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@Telaprincipal, "Erro: ${response.code}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
     }
 }

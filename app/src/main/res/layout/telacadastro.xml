@@ -62,7 +62,7 @@
         tools:ignore="ContentDescription" />
 
     <EditText
-        android:id="@+id/editTextText6"
+        android:id="@+id/senhaTexto"
         android:layout_width="248dp"
         android:layout_height="21dp"
         android:layout_marginBottom="108dp"
@@ -78,7 +78,7 @@
         tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/primeiroNomeTexto"
         android:layout_width="248dp"
         android:layout_height="21dp"
         android:layout_marginTop="108dp"
@@ -114,12 +114,12 @@
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/IdEstudante"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="552dp"
         android:autofillHints=""
-        android:text="Confirme a Senha"
+        android:text="ID Estudante"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -129,7 +129,7 @@
         tools:ignore="HardcodedText,VisualLintOverlap" />
 
     <EditText
-        android:id="@+id/editTextText5"
+        android:id="@+id/emailTexto"
         android:layout_width="248dp"
         android:layout_height="21dp"
         android:layout_marginTop="76dp"
@@ -198,7 +198,7 @@
         tools:ignore="HardcodedText" />
 
     <EditText
-        android:id="@+id/editTextText7"
+        android:id="@+id/idEstudanteTexto"
         android:layout_width="248dp"
         android:layout_height="21dp"
         android:layout_marginBottom="112dp"
@@ -214,7 +214,7 @@
         tools:ignore="Autofill,EditableContentDescCheck,LabelFor,TouchTargetSizeCheck" />
 
     <EditText
-        android:id="@+id/editTextText8"
+        android:id="@+id/ultimoNomeTexto"
         android:layout_width="248dp"
         android:layout_height="21dp"
         android:layout_marginTop="108dp"
@@ -230,7 +230,7 @@
         tools:ignore="Autofill,EditableContentDescCheck,LabelFor,TouchTargetSizeCheck" />
 
     <ImageButton
-        android:id="@+id/voltarcadastro"
+        android:id="@+id/voltarCadastro"
         android:layout_width="41dp"
         android:layout_height="37dp"
         android:layout_marginTop="36dp"
@@ -245,7 +245,7 @@
         tools:ignore="ImageContrastCheck" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/registroBotao"
         android:layout_width="338dp"
         android:layout_height="68dp"
         android:layout_marginBottom="152dp"
