@@ -30,13 +30,31 @@ class Telacadastro : AppCompatActivity() {
         }
 
         confirmarRegistro.setOnClickListener {
-
             if (verificarCamposPreenchidos(primeiroNome, ultimoNome, emailTexto, senhaTexto, idEstudante)) {
-                Toast.makeText(this, "ta preenchido", Toast.LENGTH_SHORT).show()
+                val jsonBody = org.json.JSONObject().apply {
+                    put("nome", primeiroNome.text.toString() + " " + ultimoNome.text.toString())
+                    put("email", emailTexto.text.toString())
+                    put("senha", senhaTexto.text.toString())
+                    put("idEstudante", idEstudante.text.toString())
+                }
+                var respostaApi: String? = null
+                ApiClient.request(
+                    url = "https://d2gmlnphe8ordg.cloudfront.net/api/notesync/auth/registrar",
+                    method = "POST",
+                    jsonBody = jsonBody
+                ) { success, response ->
+                    respostaApi = response
+                    runOnUiThread {
+                        if (success) {
+                            Toast.makeText(this, "Cadastro realizado!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Erro: $response", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             } else {
                 Toast.makeText(this, "não está preenchido", Toast.LENGTH_SHORT).show()
             }
-
         }
 
     }
@@ -56,3 +74,4 @@ class Telacadastro : AppCompatActivity() {
     }
 
 }
+
