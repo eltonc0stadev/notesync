@@ -177,7 +177,8 @@ class Telaprincipal : AppCompatActivity() {
 
     private fun setFavoritosLocais(ids: Set<String>) {
         val prefs = getSharedPreferences("notesync_prefs", Context.MODE_PRIVATE)
-        prefs.edit().putStringSet("favoritos_ids", ids).apply()
+        // Salva uma cópia do set para evitar problemas de referência
+        prefs.edit().putStringSet("favoritos_ids", HashSet(ids)).apply()
     }
 
     private fun adicionarNotaApiNaTela(nota: org.json.JSONObject) {
@@ -202,26 +203,18 @@ class Telaprincipal : AppCompatActivity() {
         // Favorito
         val favoritoEmpty = novaNota.findViewById<ImageView>(R.id.favoritoempty)
         val favoritoSelecionado = novaNota.findViewById<ImageView>(R.id.favselecionado)
-        val favoritosLocais = getFavoritosLocais()
-        val estaFavoritado = favoritosLocais.contains(idNota)
-        if (estaFavoritado) {
-            favoritoEmpty.visibility = View.INVISIBLE
-            favoritoSelecionado.visibility = View.VISIBLE
-        } else {
-            favoritoEmpty.visibility = View.VISIBLE
-            favoritoSelecionado.visibility = View.INVISIBLE
-        }
+        atualizarIconeFavorito(idNota, favoritoEmpty, favoritoSelecionado)
         favoritoEmpty.setOnClickListener {
-            favoritoEmpty.visibility = View.INVISIBLE
-            favoritoSelecionado.visibility = View.VISIBLE
-            val novosFavoritos = getFavoritosLocais().apply { add(idNota) }
-            setFavoritosLocais(novosFavoritos)
+            val favoritos = getFavoritosLocais()
+            favoritos.add(idNota)
+            setFavoritosLocais(favoritos)
+            atualizarIconeFavorito(idNota, favoritoEmpty, favoritoSelecionado)
         }
         favoritoSelecionado.setOnClickListener {
-            favoritoSelecionado.visibility = View.INVISIBLE
-            favoritoEmpty.visibility = View.VISIBLE
-            val novosFavoritos = getFavoritosLocais().apply { remove(idNota) }
-            setFavoritosLocais(novosFavoritos)
+            val favoritos = getFavoritosLocais()
+            favoritos.remove(idNota)
+            setFavoritosLocais(favoritos)
+            atualizarIconeFavorito(idNota, favoritoEmpty, favoritoSelecionado)
         }
         // Ajuste de layout para GridLayout
         val params = GridLayout.LayoutParams().apply {
@@ -231,6 +224,17 @@ class Telaprincipal : AppCompatActivity() {
         }
         novaNota.layoutParams = params
         containerNotas.addView(novaNota)
+    }
+
+    private fun atualizarIconeFavorito(idNota: String, favoritoEmpty: ImageView, favoritoSelecionado: ImageView) {
+        val favoritosLocais = getFavoritosLocais()
+        if (favoritosLocais.contains(idNota)) {
+            favoritoEmpty.visibility = View.INVISIBLE
+            favoritoSelecionado.visibility = View.VISIBLE
+        } else {
+            favoritoEmpty.visibility = View.VISIBLE
+            favoritoSelecionado.visibility = View.INVISIBLE
+        }
     }
 
     private fun enviarNotaParaApi(nomeArquivo: String) {
