@@ -127,24 +127,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/mais" />
 
-    <ScrollView
-        android:layout_width="match_parent"
+    <!-- Substituir o ScrollView por SwipeRefreshLayout envolvendo o ScrollView -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/botaoFiltroFavorito"
         app:layout_constraintBottom_toTopOf="@id/imageView20"
-        app:layout_constraintTop_toBottomOf="@+id/botaoFiltroFavorito">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <GridLayout
-            android:id="@+id/containerNotas"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:useDefaultMargins="true" />
-    </ScrollView>
+            android:layout_height="match_parent">
 
+            <GridLayout
+                android:id="@+id/containerNotas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:useDefaultMargins="true" />
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <TextView
         android:id="@+id/textView18"

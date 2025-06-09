@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -33,6 +34,7 @@ class Telaprincipal : AppCompatActivity() {
     private lateinit var lupaPesquisa: ImageView
     private lateinit var barraPesquisa: EditText
     private lateinit var filtroFavorito: ImageView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         carregarNotas()
@@ -42,6 +44,12 @@ class Telaprincipal : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.telaprincipal)
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            carregarNotas(barraPesquisa?.text?.toString() ?: "")
+            swipeRefreshLayout.isRefreshing = false
+        }
 
         containerNotas = findViewById(R.id.containerNotas)
         val botaoAdicionarNota = findViewById<ImageView>(R.id.imageView20)
@@ -115,6 +123,7 @@ class Telaprincipal : AppCompatActivity() {
             Toast.makeText(this, "Token não encontrado", Toast.LENGTH_SHORT).show()
             return
         }
+        val favoritosLocais = getFavoritosLocais()
         val client = OkHttpClient()
         val request = Request.Builder()
             .url("https://d2gmlnphe8ordg.cloudfront.net/api/notesync/nota/listar") // Substitua pelo endpoint correto
@@ -136,8 +145,11 @@ class Telaprincipal : AppCompatActivity() {
                             runOnUiThread {
                                 for (i in 0 until notasArray.length()) {
                                     val nota = notasArray.getJSONObject(i)
+                                    val idNota = nota.opt("id").toString()
                                     val titulo = nota.optString("titulo", "Sem título")
-                                    if (filtroTexto.isBlank() || titulo.contains(filtroTexto, ignoreCase = true)) {
+                                    val passaFiltroFavorito = !filtroAtivo || favoritosLocais.contains(idNota)
+                                    val passaFiltroTexto = filtroTexto.isBlank() || titulo.contains(filtroTexto, ignoreCase = true)
+                                    if (passaFiltroFavorito && passaFiltroTexto) {
                                         adicionarNotaApiNaTela(nota)
                                     }
                                 }
@@ -157,9 +169,21 @@ class Telaprincipal : AppCompatActivity() {
         })
     }
 
+    // Utilitários para favoritos locais
+    private fun getFavoritosLocais(): MutableSet<String> {
+        val prefs = getSharedPreferences("notesync_prefs", Context.MODE_PRIVATE)
+        return prefs.getStringSet("favoritos_ids", mutableSetOf()) ?: mutableSetOf()
+    }
+
+    private fun setFavoritosLocais(ids: Set<String>) {
+        val prefs = getSharedPreferences("notesync_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putStringSet("favoritos_ids", ids).apply()
+    }
+
     private fun adicionarNotaApiNaTela(nota: org.json.JSONObject) {
         val inflater = LayoutInflater.from(this)
         val novaNota = inflater.inflate(R.layout.gruponota, containerNotas, false)
+        val idNota = nota.opt("id").toString()
         val titulo = nota.optString("titulo", "Sem título")
         val conteudo = nota.optString("conteudo", "")
         val textTituloNota = novaNota.findViewById<TextView>(R.id.TituloPrincipal)
@@ -174,6 +198,30 @@ class Telaprincipal : AppCompatActivity() {
         val blocoNota = novaNota.findViewById<ImageView>(R.id.bloconota)
         blocoNota.setOnClickListener {
             Toast.makeText(this, conteudo, Toast.LENGTH_SHORT).show()
+        }
+        // Favorito
+        val favoritoEmpty = novaNota.findViewById<ImageView>(R.id.favoritoempty)
+        val favoritoSelecionado = novaNota.findViewById<ImageView>(R.id.favselecionado)
+        val favoritosLocais = getFavoritosLocais()
+        val estaFavoritado = favoritosLocais.contains(idNota)
+        if (estaFavoritado) {
+            favoritoEmpty.visibility = View.INVISIBLE
+            favoritoSelecionado.visibility = View.VISIBLE
+        } else {
+            favoritoEmpty.visibility = View.VISIBLE
+            favoritoSelecionado.visibility = View.INVISIBLE
+        }
+        favoritoEmpty.setOnClickListener {
+            favoritoEmpty.visibility = View.INVISIBLE
+            favoritoSelecionado.visibility = View.VISIBLE
+            val novosFavoritos = getFavoritosLocais().apply { add(idNota) }
+            setFavoritosLocais(novosFavoritos)
+        }
+        favoritoSelecionado.setOnClickListener {
+            favoritoSelecionado.visibility = View.INVISIBLE
+            favoritoEmpty.visibility = View.VISIBLE
+            val novosFavoritos = getFavoritosLocais().apply { remove(idNota) }
+            setFavoritosLocais(novosFavoritos)
         }
         // Ajuste de layout para GridLayout
         val params = GridLayout.LayoutParams().apply {
