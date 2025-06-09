@@ -39,7 +39,7 @@ class Telacadastro : AppCompatActivity() {
                 }
                 var respostaApi: String? = null
                 ApiClient.request(
-                    url = "https://d2gmlnphe8ordg.cloudfront.net/api/notesync/auth/registrar",
+                    url = "https://d2gmlnphe8ordg.cloudfront.net/api/notesync/auth/registro",
                     method = "POST",
                     jsonBody = jsonBody
                 ) { success, response ->
