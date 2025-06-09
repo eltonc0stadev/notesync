@@ -1,5 +1,6 @@
 package com.example.treino1
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -108,122 +109,80 @@ class Telaprincipal : AppCompatActivity() {
 
     private fun carregarNotas(filtroTexto: String = "") {
         containerNotas.removeAllViews()
-        val arquivos = filesDir.listFiles() ?: return
-        val arquivosNotas = arquivos.filter { it.name.startsWith("nota_") && it.name.endsWith(".txt") }
-
-        for (arquivo in arquivosNotas) {
-            val nome = arquivo.name
-            val titulo = lerTituloDaNota(nome)
-            val passaFiltroFavorito = !filtroAtivo || lerFavoritoDaNota(nome)
-            val passaFiltroTexto = filtroTexto.isBlank() || titulo.contains(filtroTexto, ignoreCase = true)
-
-            if (passaFiltroFavorito && passaFiltroTexto) {
-                adicionarNotaNaTela(nome)
-            }
+        val prefs = getSharedPreferences("notesync_prefs", Context.MODE_PRIVATE)
+        val token = prefs.getString("auth_token", null)
+        if (token == null) {
+            Toast.makeText(this, "Token não encontrado", Toast.LENGTH_SHORT).show()
+            return
         }
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("https://d2gmlnphe8ordg.cloudfront.net/api/notesync/nota/listar") // Substitua pelo endpoint correto
+            .addHeader("Authorization", "Bearer $token")
+            .get()
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(this@Telaprincipal, "Erro ao buscar notas", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.code == 200 || response.code == 302) {
+                    val body = response.body?.string()
+                    if (body != null) {
+                        try {
+                            val notasArray = org.json.JSONArray(body)
+                            runOnUiThread {
+                                for (i in 0 until notasArray.length()) {
+                                    val nota = notasArray.getJSONObject(i)
+                                    val titulo = nota.optString("titulo", "Sem título")
+                                    if (filtroTexto.isBlank() || titulo.contains(filtroTexto, ignoreCase = true)) {
+                                        adicionarNotaApiNaTela(nota)
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            runOnUiThread {
+                                Toast.makeText(this@Telaprincipal, "Erro ao processar notas", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@Telaprincipal, "Erro ao buscar notas: ${response.code}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
     }
 
-    private fun adicionarNotaNaTela(nomeArquivoNota: String) {
+    private fun adicionarNotaApiNaTela(nota: org.json.JSONObject) {
         val inflater = LayoutInflater.from(this)
         val novaNota = inflater.inflate(R.layout.gruponota, containerNotas, false)
-
-        val tituloNota = lerTituloDaNota(nomeArquivoNota).ifBlank { "Sem título" }
+        val titulo = nota.optString("titulo", "Sem título")
+        val conteudo = nota.optString("conteudo", "")
         val textTituloNota = novaNota.findViewById<TextView>(R.id.TituloPrincipal)
-        val textoLimitado = if (tituloNota.length > 20) {
+        val textoLimitado = if (titulo.length > 20) {
             textTituloNota.textSize = 16f
-            tituloNota.substring(0, 20) + "..."
+            titulo.substring(0, 20) + "..."
         } else {
             textTituloNota.textSize = 17f
-            tituloNota
+            titulo
         }
         textTituloNota.text = textoLimitado
-
         val blocoNota = novaNota.findViewById<ImageView>(R.id.bloconota)
         blocoNota.setOnClickListener {
-            val intent = Intent(this, Telanota::class.java)
-            intent.putExtra("nomeArquivo", nomeArquivoNota)
-            launcher.launch(intent)
+            Toast.makeText(this, conteudo, Toast.LENGTH_SHORT).show()
         }
-
-        val favoritoEmpty = novaNota.findViewById<ImageView>(R.id.favoritoempty)
-        val favoritoSelecionado = novaNota.findViewById<ImageView>(R.id.favselecionado)
-
-        val estaFavoritado = lerFavoritoDaNota(nomeArquivoNota)
-        if (estaFavoritado) {
-            favoritoEmpty.visibility = View.INVISIBLE
-            favoritoSelecionado.visibility = View.VISIBLE
-        } else {
-            favoritoEmpty.visibility = View.VISIBLE
-            favoritoSelecionado.visibility = View.INVISIBLE
-        }
-
-        favoritoEmpty.setOnClickListener {
-            favoritoEmpty.visibility = View.INVISIBLE
-            favoritoSelecionado.visibility = View.VISIBLE
-            atualizarFavorito(nomeArquivoNota, true)
-        }
-
-        favoritoSelecionado.setOnClickListener {
-            favoritoSelecionado.visibility = View.INVISIBLE
-            favoritoEmpty.visibility = View.VISIBLE
-            atualizarFavorito(nomeArquivoNota, false)
-        }
-
-        val layoutParams = GridLayout.LayoutParams().apply {
+        // Ajuste de layout para GridLayout
+        val params = GridLayout.LayoutParams().apply {
             width = 0
             height = GridLayout.LayoutParams.WRAP_CONTENT
             columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
         }
-        novaNota.layoutParams = layoutParams
-
+        novaNota.layoutParams = params
         containerNotas.addView(novaNota)
-    }
-
-    private fun lerTituloDaNota(nomeArquivo: String): String {
-        return try {
-            val linhas = openFileInput(nomeArquivo).bufferedReader().readLines()
-            linhas.firstOrNull() ?: ""
-        } catch (e: Exception) {
-            ""
-        }
-    }
-
-    private fun lerFavoritoDaNota(nomeArquivo: String): Boolean {
-        return try {
-            val linhas = openFileInput(nomeArquivo).bufferedReader().readLines()
-            linhas.any { it.trim().equals("#FAVORITO=true", ignoreCase = true) }
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    private fun salvarNota(nomeArquivo: String, titulo: String, conteudo: String, favorito: Boolean) {
-        try {
-            openFileOutput(nomeArquivo, MODE_PRIVATE).use {
-                val favoritoTag = if (favorito) "\n#FAVORITO=true" else ""
-                it.write((titulo + "\n" + conteudo + favoritoTag).toByteArray())
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun atualizarFavorito(nomeArquivo: String, favoritar: Boolean) {
-        try {
-            val arquivo = File(filesDir, nomeArquivo)
-            if (!arquivo.exists()) return
-
-            val linhas = arquivo.readLines().toMutableList()
-            linhas.removeAll { it.trim().startsWith("#FAVORITO") }
-
-            if (favoritar) {
-                linhas.add("#FAVORITO=true")
-            }
-
-            arquivo.writeText(linhas.joinToString("\n"))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     private fun enviarNotaParaApi(nomeArquivo: String) {
@@ -256,7 +215,7 @@ class Telaprincipal : AppCompatActivity() {
             .toRequestBody("application/json; charset=utf-8".toMediaType())
 
         val request = Request.Builder()
-            .url("https://suaapi.com/notas")
+            .url("https://d2gmlnphe8ordg.cloudfront.net/nota/criar")
             .addHeader("Authorization", "Bearer $jwtToken")
             .post(requestBody)
             .build()
@@ -278,5 +237,9 @@ class Telaprincipal : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun salvarNota(nomeArquivo: String, titulo: String, conteudo: String, favorito: Boolean) {
+        // Função placeholder para evitar erro de referência, não faz nada
     }
 }
