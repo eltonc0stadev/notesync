@@ -5,7 +5,7 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffe4c4"
+    android:background="@color/beige"
     tools:layout_editor_absoluteX="-4dp"
     tools:layout_editor_absoluteY="2dp">
 
@@ -152,31 +152,18 @@
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <TextView
-        android:id="@+id/textView18"
+    <Button
+        android:id="@+id/btnPerfil"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="72dp"
-        android:contentDescription="@string/perfil"
-        android:text="@string/perfil"
-        android:textColor="@android:color/black"
+        android:layout_marginBottom="24dp"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:text="Carregando..."
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/purple_500"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.376"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/iconeperfil"
-        android:layout_width="70dp"
-        android:layout_height="76dp"
-        android:layout_marginBottom="48dp"
-        android:clickable="true"
-        android:contentDescription="@string/perfil"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.123"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/perfilicone" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageView
@@ -68,11 +69,13 @@ class Telaprincipal : AppCompatActivity() {
             criarNovaNota()
         }
 
-        val perfil = findViewById<ImageView>(R.id.iconeperfil)
-        perfil.setOnClickListener {
+        val btnPerfil = findViewById<Button>(R.id.btnPerfil)
+        btnPerfil.setOnClickListener {
             val intent = Intent(this, Telaperfil::class.java)
             startActivity(intent)
         }
+
+        carregarNomeUsuario()
 
         filtroFavorito.setOnClickListener {
             filtroAtivo = !filtroAtivo
@@ -361,5 +364,32 @@ class Telaprincipal : AppCompatActivity() {
 
     private fun salvarNota(nomeArquivo: String, titulo: String, conteudo: String, favorito: Boolean) {
         // Função placeholder para evitar erro de referência, não faz nada
+    }
+
+    private fun carregarNomeUsuario() {
+        val token = getSharedPreferences("notesync_prefs", Context.MODE_PRIVATE)
+            .getString("auth_token", null)
+        if (token == null) {
+            Toast.makeText(this, "Token não encontrado", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        ApiClient.request(
+            url = "https://d2gmlnphe8ordg.cloudfront.net/api/notesync/usuario/info",
+            method = "GET",
+            headers = mapOf("Authorization" to "Bearer $token")
+        ) { success, response ->
+            if (success && response != null) {
+                try {
+                    val userInfo = JSONObject(response)
+                    val nome = userInfo.optString("nome", "Usuário")
+                    runOnUiThread {
+                        findViewById<Button>(R.id.btnPerfil).text = nome
+                    }
+                } catch (e: Exception) {
+                    println("Erro ao processar dados do usuário: ${e.message}")
+                }
+            }
+        }
     }
 }
