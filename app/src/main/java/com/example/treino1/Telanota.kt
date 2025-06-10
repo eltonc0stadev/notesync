@@ -30,7 +30,15 @@ class Telanota : AppCompatActivity() {
 
         anotacao = findViewById(R.id.editTextText3)
         titulo = findViewById(R.id.Texttitulo)
+
+        // Recebe os dados da nota selecionada
         nomeArquivo = intent.getStringExtra("nomeArquivo") ?: "nota_padrao.txt"
+        val tituloRecebido = intent.getStringExtra("titulo") ?: ""
+        val conteudoRecebido = intent.getStringExtra("conteudo") ?: ""
+
+        // Define o título e conteúdo nos campos
+        titulo.setText(tituloRecebido)
+        anotacao.setText(conteudoRecebido)
 
         comunidade = findViewById(R.id.comunidade)
         temachange = findViewById(R.id.temachange)
@@ -38,6 +46,7 @@ class Telanota : AppCompatActivity() {
 
         val voltar = findViewById<ImageButton>(R.id.voltarnota)
         voltar.setOnClickListener {
+            salvarNota(nomeArquivo, titulo.text.toString(), anotacao.text.toString())
             val intent = Intent()
             intent.putExtra("nomeArquivo", nomeArquivo)
             setResult(RESULT_OK, intent)
@@ -48,10 +57,6 @@ class Telanota : AppCompatActivity() {
         botaoTrash.setOnClickListener {
             mostrarDialogoConfirmacaoApagar()
         }
-
-        val (tituloSalvo, anotacaoSalva) = lerNota(nomeArquivo)
-        titulo.setText(tituloSalvo)
-        anotacao.setText(anotacaoSalva)
 
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {

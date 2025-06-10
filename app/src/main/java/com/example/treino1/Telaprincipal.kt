@@ -198,7 +198,11 @@ class Telaprincipal : AppCompatActivity() {
         textTituloNota.text = textoLimitado
         val blocoNota = novaNota.findViewById<ImageView>(R.id.bloconota)
         blocoNota.setOnClickListener {
-            Toast.makeText(this, conteudo, Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, Telanota::class.java)
+            intent.putExtra("nomeArquivo", "nota_${idNota}.txt")
+            intent.putExtra("titulo", titulo)
+            intent.putExtra("conteudo", conteudo)
+            launcher.launch(intent)
         }
         // Favorito
         val favoritoEmpty = novaNota.findViewById<ImageView>(R.id.favoritoempty)
