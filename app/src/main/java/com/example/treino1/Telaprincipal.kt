@@ -31,8 +31,6 @@ class Telaprincipal : AppCompatActivity() {
     private var filtroAtivo = false
 
     private lateinit var iconeComunidade: ImageView
-    private lateinit var iconeTemaChange: ImageView
-    private lateinit var iconeNotificacao: ImageView
     private lateinit var lupaPesquisa: ImageView
     private lateinit var barraPesquisa: EditText
     private lateinit var filtroFavorito: ImageView
@@ -56,8 +54,6 @@ class Telaprincipal : AppCompatActivity() {
         containerNotas = findViewById(R.id.containerNotas)
         val botaoAdicionarNota = findViewById<ImageView>(R.id.imageView20)
         iconeComunidade = findViewById(R.id.comunidade)
-        iconeTemaChange = findViewById(R.id.temachange)
-        iconeNotificacao = findViewById(R.id.imageView13)
         lupaPesquisa = findViewById(R.id.Pesquisa)
         filtroFavorito = findViewById(R.id.FiltroFavorito)
         barraPesquisa = findViewById(R.id.campoPesquisa)
@@ -89,14 +85,10 @@ class Telaprincipal : AppCompatActivity() {
                 barraPesquisa.visibility = View.VISIBLE
                 barraPesquisa.requestFocus()
                 iconeComunidade.visibility = View.INVISIBLE
-                iconeTemaChange.visibility = View.INVISIBLE
-                iconeNotificacao.visibility = View.INVISIBLE
             } else {
                 barraPesquisa.setText("")
                 barraPesquisa.visibility = View.GONE
                 iconeComunidade.visibility = View.VISIBLE
-                iconeTemaChange.visibility = View.VISIBLE
-                iconeNotificacao.visibility = View.VISIBLE
                 carregarNotas()
             }
         }

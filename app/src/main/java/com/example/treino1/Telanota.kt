@@ -52,10 +52,6 @@ class Telanota : AppCompatActivity() {
         titulo.setText(tituloRecebido)
         anotacao.setText(conteudoRecebido)
 
-        comunidade = findViewById(R.id.comunidade)
-        temachange = findViewById(R.id.temachange)
-        notificacao = findViewById(R.id.imageView13)
-
         // Configura o botão de voltar
         val voltar = findViewById<ImageButton>(R.id.voltarnota)
         voltar.setOnClickListener {
