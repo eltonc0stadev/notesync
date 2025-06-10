@@ -24,6 +24,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
+import android.util.Base64
 
 class Telaprincipal : AppCompatActivity() {
 
@@ -110,14 +111,12 @@ class Telaprincipal : AppCompatActivity() {
             return
         }
 
-        val usuariosCompartilhadosIds = JSONArray() // Lista vazia de usuários compartilhados
-
         val jsonBody = JSONObject().apply {
             put("titulo", "Sem titulo")
-            put("conteudo", "")
+            put("conteudo", codificarConteudo("")) // Conteúdo vazio em base64
             put("arquivada", false)
             put("lixeira", false)
-            put("usuariosCompartilhadosIds", usuariosCompartilhadosIds)
+            put("usuariosCompartilhadosIds", JSONArray())
         }
 
         println("Criando nova nota:")
@@ -134,18 +133,19 @@ class Telaprincipal : AppCompatActivity() {
                     val notaResponse = JSONObject(response)
                     val idNota = notaResponse.optString("id")
                     val titulo = notaResponse.optString("titulo", "Sem titulo")
-                    val conteudo = notaResponse.optString("conteudo", "")
+                    val conteudoCodificado = notaResponse.optString("conteudo", "")
+                    val conteudo = decodificarConteudo(conteudoCodificado)
 
                     println("Nota criada com sucesso:")
                     println("ID: $idNota")
                     println("Título: $titulo")
-                    println("Conteúdo: $conteudo")
+                    println("Conteúdo decodificado: $conteudo")
 
                     runOnUiThread {
                         val intent = Intent(this, Telanota::class.java)
                         intent.putExtra("nomeArquivo", "nota_${idNota}.txt")
                         intent.putExtra("titulo", titulo)
-                        intent.putExtra("conteudo", conteudo)
+                        intent.putExtra("conteudo", conteudoCodificado) // Mantém codificado para a Telanota decodificar
                         intent.putExtra("idNota", idNota)
                         intent.putExtra("usuariosCompartilhadosIds", ArrayList<Long>())
                         launcher.launch(intent)
@@ -235,8 +235,8 @@ class Telaprincipal : AppCompatActivity() {
         val inflater = LayoutInflater.from(this)
         val novaNota = inflater.inflate(R.layout.gruponota, containerNotas, false)
         val idNota = nota.opt("id").toString()
-        val titulo = nota.optString("titulo", "Sem título")
-        val conteudo = nota.optString("conteudo", "")
+        val titulo = nota.optString("titulo", "Sem título").replace("\n", " ") // Remove quebras de linha
+        val conteudoCodificado = nota.optString("conteudo", "")
         val textTituloNota = novaNota.findViewById<TextView>(R.id.TituloPrincipal)
         val textoLimitado = if (titulo.length > 20) {
             textTituloNota.textSize = 16f
@@ -251,7 +251,7 @@ class Telaprincipal : AppCompatActivity() {
             val intent = Intent(this, Telanota::class.java)
             intent.putExtra("nomeArquivo", "nota_${idNota}.txt")
             intent.putExtra("titulo", titulo)
-            intent.putExtra("conteudo", conteudo)
+            intent.putExtra("conteudo", conteudoCodificado) // Mantém codificado para a Telanota decodificar
             intent.putExtra("idNota", idNota)
             // Adiciona os IDs dos usuários compartilhados
             nota.optJSONArray("usuariosCompartilhadosIds")?.let { idsArray ->
@@ -382,6 +382,19 @@ class Telaprincipal : AppCompatActivity() {
                     println("Erro ao processar dados do usuário: ${e.message}")
                 }
             }
+        }
+    }
+
+    private fun codificarConteudo(conteudo: String): String {
+        return Base64.encodeToString(conteudo.toByteArray(), Base64.NO_WRAP)
+    }
+
+    private fun decodificarConteudo(conteudoBase64: String): String {
+        return try {
+            String(Base64.decode(conteudoBase64, Base64.DEFAULT))
+        } catch (e: Exception) {
+            println("Erro ao decodificar conteúdo: ${e.message}")
+            ""
         }
     }
 }

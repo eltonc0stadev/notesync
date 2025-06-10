@@ -3,7 +3,9 @@ package com.example.treino1
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
+import android.util.Base64
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -34,13 +36,16 @@ class Telanota : AppCompatActivity() {
         anotacao = findViewById(R.id.editTextText3)
         titulo = findViewById(R.id.Texttitulo)
 
+        // Previne quebras de linha no título
+        titulo.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
+            source?.toString()?.replace("\n", " ") ?: ""
+        })
+
         // Recebe os dados da nota selecionada
         nomeArquivo = intent.getStringExtra("nomeArquivo") ?: "nota_padrao.txt"
         val tituloRecebido = intent.getStringExtra("titulo") ?: ""
-        val conteudoRecebido = intent.getStringExtra("conteudo") ?: ""
+        val conteudoRecebido = intent.getStringExtra("conteudo")?.let { decodificarConteudo(it) } ?: ""
         idNota = intent.getStringExtra("idNota")?.toLongOrNull()
-
-        println("ID da nota recebido: $idNota")
 
         // Recebe a lista de usuários compartilhados
         @Suppress("UNCHECKED_CAST")
@@ -90,7 +95,7 @@ class Telanota : AppCompatActivity() {
     private fun atualizarNotaApi() {
         println("Iniciando atualização da nota")
         if (idNota == null) {
-            println("ID da nota é null, não é possível atualizar")
+            println("idNota é null, não é possível atualizar")
             return
         }
 
@@ -101,10 +106,13 @@ class Telanota : AppCompatActivity() {
             return
         }
 
+        val tituloAtual = titulo.text.toString().replace("\n", " ")
+        val conteudoAtual = codificarConteudo(anotacao.text.toString())
+
         val jsonBody = JSONObject().apply {
             put("id", idNota)
-            put("titulo", titulo.text.toString())
-            put("conteudo", anotacao.text.toString())
+            put("titulo", tituloAtual)
+            put("conteudo", conteudoAtual)
             put("arquivada", false)
             put("lixeira", false)
             put("usuariosCompartilhadosIds", JSONArray(usuariosCompartilhadosIds))
@@ -128,6 +136,19 @@ class Telanota : AppCompatActivity() {
                     Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
+
+    private fun codificarConteudo(conteudo: String): String {
+        return Base64.encodeToString(conteudo.toByteArray(), Base64.NO_WRAP)
+    }
+
+    private fun decodificarConteudo(conteudoBase64: String): String {
+        return try {
+            String(Base64.decode(conteudoBase64, Base64.DEFAULT))
+        } catch (e: Exception) {
+            println("Erro ao decodificar conteúdo: ${e.message}")
+            ""
         }
     }
 
