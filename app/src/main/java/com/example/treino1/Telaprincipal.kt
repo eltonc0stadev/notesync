@@ -19,6 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
@@ -107,12 +108,66 @@ class Telaprincipal : AppCompatActivity() {
     }
 
     private fun criarNovaNota() {
-        val nomeArquivoNota = "nota_${System.currentTimeMillis()}.txt"
-        salvarNota(nomeArquivoNota, "", "", false)
-        enviarNotaParaApi(nomeArquivoNota)
-        val intent = Intent(this, Telanota::class.java)
-        intent.putExtra("nomeArquivo", nomeArquivoNota)
-        launcher.launch(intent)
+        val prefs = getSharedPreferences("notesync_prefs", Context.MODE_PRIVATE)
+        val token = prefs.getString("auth_token", null)
+        if (token == null) {
+            Toast.makeText(this, "Token não encontrado", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val usuariosCompartilhadosIds = JSONArray() // Lista vazia de usuários compartilhados
+
+        val jsonBody = JSONObject().apply {
+            put("titulo", "Sem titulo")
+            put("conteudo", "")
+            put("arquivada", false)
+            put("lixeira", false)
+            put("usuariosCompartilhadosIds", usuariosCompartilhadosIds)
+        }
+
+        println("Criando nova nota:")
+        println("Request Body: ${jsonBody.toString(2)}")
+
+        ApiClient.request(
+            url = "https://d2gmlnphe8ordg.cloudfront.net/api/notesync/nota/criar",
+            method = "POST",
+            jsonBody = jsonBody,
+            headers = mapOf("Authorization" to "Bearer $token")
+        ) { success, response ->
+            if (success && response != null) {
+                try {
+                    val notaResponse = JSONObject(response)
+                    val idNota = notaResponse.optString("id")
+                    val titulo = notaResponse.optString("titulo", "Sem titulo")
+                    val conteudo = notaResponse.optString("conteudo", "")
+
+                    println("Nota criada com sucesso:")
+                    println("ID: $idNota")
+                    println("Título: $titulo")
+                    println("Conteúdo: $conteudo")
+
+                    runOnUiThread {
+                        val intent = Intent(this, Telanota::class.java)
+                        intent.putExtra("nomeArquivo", "nota_${idNota}.txt")
+                        intent.putExtra("titulo", titulo)
+                        intent.putExtra("conteudo", conteudo)
+                        intent.putExtra("idNota", idNota)
+                        intent.putExtra("usuariosCompartilhadosIds", ArrayList<Long>())
+                        launcher.launch(intent)
+                    }
+                } catch (e: Exception) {
+                    println("Erro ao processar resposta: ${e.message}")
+                    runOnUiThread {
+                        Toast.makeText(this, "Erro ao processar resposta da API", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                println("Erro ao criar nota: $response")
+                runOnUiThread {
+                    Toast.makeText(this, "Erro ao criar nota", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun carregarNotas(filtroTexto: String = "") {
@@ -202,6 +257,15 @@ class Telaprincipal : AppCompatActivity() {
             intent.putExtra("nomeArquivo", "nota_${idNota}.txt")
             intent.putExtra("titulo", titulo)
             intent.putExtra("conteudo", conteudo)
+            intent.putExtra("idNota", idNota)
+            // Adiciona os IDs dos usuários compartilhados
+            nota.optJSONArray("usuariosCompartilhadosIds")?.let { idsArray ->
+                val ids = ArrayList<Long>()
+                for (i in 0 until idsArray.length()) {
+                    ids.add(idsArray.optLong(i))
+                }
+                intent.putExtra("usuariosCompartilhadosIds", ids)
+            }
             launcher.launch(intent)
         }
         // Favorito
