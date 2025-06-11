@@ -22,17 +22,16 @@
 
     <EditText
         android:id="@+id/editTextText2"
-        android:layout_width="308dp"
-        android:layout_height="51dp"
+        android:layout_width="355dp"
+        android:layout_height="46dp"
         android:background="@drawable/chatbubble"
         android:ems="10"
         android:hint="@string/msgteste"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.32"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.951" />
+        app:layout_constraintVertical_bias="0.957" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
