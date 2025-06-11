@@ -211,8 +211,10 @@ class Telaprincipal : AppCompatActivity() {
                         }
                     }
                 } else {
-                    runOnUiThread {
-                        Toast.makeText(this@Telaprincipal, "Erro ao buscar notas: ${response.code}", Toast.LENGTH_SHORT).show()
+                    if (response.code != 404) {
+                        runOnUiThread {
+                            Toast.makeText(this@Telaprincipal, "Erro ao buscar notas: ${response.code}", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }

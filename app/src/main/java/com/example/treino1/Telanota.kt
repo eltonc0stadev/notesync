@@ -72,7 +72,7 @@ class Telanota : AppCompatActivity() {
             mostrarDialogoConfirmacaoApagar()
         }
 
-        // Configura TextWatchers para detectar mudanças
+        // Detecta mudanças no conteúdo da nota
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 notaAlterada = true
@@ -139,6 +139,74 @@ class Telanota : AppCompatActivity() {
         }
     }
 
+    private fun apagarNotaApi() {
+        if (idNota == null) {
+            println("idNota é null, não é possível apagar na API")
+            return
+        }
+
+        val prefs = getSharedPreferences("notesync_prefs", MODE_PRIVATE)
+        val token = prefs.getString("auth_token", null)
+        if (token == null) {
+            println("Token não encontrado")
+            return
+        }
+
+        val tituloAtual = titulo.text.toString().replace("\n", " ")
+        val conteudoAtual = codificarConteudo(anotacao.text.toString())
+
+        val jsonBody = JSONObject().apply {
+            put("id", idNota)
+            put("titulo", tituloAtual)
+            put("conteudo", conteudoAtual)
+            put("arquivada", true)
+            put("lixeira", true)
+            put("usuariosCompartilhadosIds", JSONArray(usuariosCompartilhadosIds))
+        }
+
+        println("Enviando requisição de exclusão para a API:")
+        println(jsonBody.toString(2))
+
+        ApiClient.request(
+            url = "https://d2gmlnphe8ordg.cloudfront.net/api/notesync/nota/deletar",
+            method = "PUT",
+            jsonBody = jsonBody,
+            headers = mapOf("Authorization" to "Bearer $token")
+        ) { success, response ->
+            runOnUiThread {
+                if (success) {
+                    println("Nota marcada como excluída com sucesso")
+                    deleteFile(nomeArquivo)
+                    val intent = Intent().apply {
+                        putExtra("notaApagada", true)
+                        putExtra("nomeArquivo", nomeArquivo)
+                    }
+                    setResult(RESULT_OK, intent)
+                    finish()
+                } else {
+                    val msg = "Erro ao excluir nota na API: $response"
+                    println(msg)
+                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun mostrarDialogoConfirmacaoApagar() {
+        AlertDialog.Builder(this)
+            .setTitle("Excluir nota")
+            .setMessage("Tem certeza que deseja apagar esta nota?")
+            .setPositiveButton("Sim") { dialog, _ ->
+                apagarNotaApi()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Não") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
     private fun codificarConteudo(conteudo: String): String {
         return Base64.encodeToString(conteudo.toByteArray(), Base64.NO_WRAP)
     }
@@ -149,33 +217,6 @@ class Telanota : AppCompatActivity() {
         } catch (e: Exception) {
             println("Erro ao decodificar conteúdo: ${e.message}")
             ""
-        }
-    }
-
-    private fun mostrarDialogoConfirmacaoApagar() {
-        AlertDialog.Builder(this)
-            .setTitle("Excluir nota")
-            .setMessage("Tem certeza que deseja apagar esta nota?")
-            .setPositiveButton("Sim") { dialog, _ ->
-                apagarNota()
-                dialog.dismiss()
-            }
-            .setNegativeButton("Não") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-    }
-
-    private fun apagarNota() {
-        val apagou = deleteFile(nomeArquivo)
-        if (apagou) {
-            val intent = Intent().apply {
-                putExtra("notaApagada", true)
-                putExtra("nomeArquivo", nomeArquivo)
-            }
-            setResult(RESULT_OK, intent)
-            finish()
         }
     }
 
