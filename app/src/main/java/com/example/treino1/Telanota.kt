@@ -78,6 +78,7 @@ class Telanota : AppCompatActivity() {
         botaoUsuariosCompartilhados.setOnClickListener {
             val intent = Intent(this, com.example.treino1.AmigosCompartilhadosActivity::class.java)
             intent.putExtra("usuariosCompartilhadosList", usuariosCompartilhados)
+            intent.putExtra("idNota", idNota ?: 0L)
             startActivity(intent)
         }
 
