@@ -250,25 +250,56 @@ class Telaprincipal : AppCompatActivity() {
         textTituloNota.text = textoLimitado
         val blocoNota = novaNota.findViewById<ImageView>(R.id.bloconota)
         blocoNota.setOnClickListener {
-            val intent = Intent(this, Telanota::class.java)
-            intent.putExtra("nomeArquivo", "nota_${idNota}.txt")
-            intent.putExtra("titulo", titulo)
-            intent.putExtra("conteudo", conteudoCodificado) // Mantém codificado para a Telanota decodificar
-            intent.putExtra("idNota", idNota)
-            // Adiciona os usuários compartilhados (id e nome)
-            val usuariosCompartilhados = ArrayList<UsuarioCompartilhado>()
-            nota.optJSONArray("usuariosCompartilhados")?.let { usuariosArray ->
-                for (i in 0 until usuariosArray.length()) {
-                    val usuarioObj = usuariosArray.optJSONObject(i)
-                    if (usuarioObj != null) {
-                        val idUsuario = usuarioObj.optLong("idUsuario")
-                        val nome = usuarioObj.optString("nome", "")
-                        usuariosCompartilhados.add(UsuarioCompartilhado(idUsuario, nome))
+            val prefs = getSharedPreferences("notesync_prefs", MODE_PRIVATE)
+            val token = prefs.getString("auth_token", null)
+            if (token == null) {
+                Toast.makeText(this, "Token não encontrado", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            // Busca o id do usuário atual na API antes de abrir a nota
+            ApiClient.request(
+                url = "https://d2gmlnphe8ordg.cloudfront.net/api/notesync/usuario/info",
+                method = "GET",
+                headers = mapOf("Authorization" to "Bearer $token")
+            ) { success, response ->
+                runOnUiThread {
+                    if (success && response != null) {
+                        try {
+                            val userInfo = org.json.JSONObject(response)
+                            val idUsuarioAtual = userInfo.optLong("id", -1L)
+                            val intent = Intent(this, Telanota::class.java)
+                            intent.putExtra("nomeArquivo", "nota_${idNota}.txt")
+                            intent.putExtra("titulo", titulo)
+                            intent.putExtra("conteudo", conteudoCodificado)
+                            intent.putExtra("idNota", idNota)
+                            // Envia o id do dono da nota
+                            val donoObj = nota.optJSONObject("donoId")
+                            val idDono = donoObj?.optLong("idUsuario") ?: -1L
+                            intent.putExtra("donoId", idDono)
+                            // Envia o id do usuário atual
+                            intent.putExtra("idUsuarioAtual", idUsuarioAtual)
+                            // Adiciona os usuários compartilhados (id e nome)
+                            val usuariosCompartilhados = ArrayList<UsuarioCompartilhado>()
+                            nota.optJSONArray("usuariosCompartilhados")?.let { usuariosArray ->
+                                for (i in 0 until usuariosArray.length()) {
+                                    val usuarioObj = usuariosArray.optJSONObject(i)
+                                    if (usuarioObj != null) {
+                                        val idUsuario = usuarioObj.optLong("idUsuario")
+                                        val nome = usuarioObj.optString("nome", "")
+                                        usuariosCompartilhados.add(UsuarioCompartilhado(idUsuario, nome))
+                                    }
+                                }
+                            }
+                            intent.putExtra("usuariosCompartilhadosList", usuariosCompartilhados)
+                            launcher.launch(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(this@Telaprincipal, "Erro ao processar usuário", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this@Telaprincipal, "Erro ao buscar usuário", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
-            intent.putExtra("usuariosCompartilhadosList", usuariosCompartilhados)
-            launcher.launch(intent)
         }
         // Favorito
         val favoritoEmpty = novaNota.findViewById<ImageView>(R.id.favoritoempty)

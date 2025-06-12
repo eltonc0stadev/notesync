@@ -25,6 +25,7 @@ class Telanota : AppCompatActivity() {
     private var usuariosCompartilhadosIds: ArrayList<Long> = arrayListOf()
     private var usuariosCompartilhados: ArrayList<UsuarioCompartilhado> = arrayListOf()
     private var notaAlterada: Boolean = false
+    private var donoId: Long? = null
 
     private lateinit var comunidade: ImageView
     private lateinit var temachange: ImageView
@@ -38,6 +39,11 @@ class Telanota : AppCompatActivity() {
 
         anotacao = findViewById(R.id.editTextText3)
         titulo = findViewById(R.id.Texttitulo)
+
+        // Recupera o donoId enviado pela intent
+        donoId = intent.getLongExtra("donoId", -1L)
+        // Recupera o id do usuário atual enviado pela intent
+        val idUsuarioAtual = intent.getLongExtra("idUsuarioAtual", -1L)
 
         // Previne quebras de linha no título
         titulo.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
@@ -72,7 +78,11 @@ class Telanota : AppCompatActivity() {
         // Configura o botão de lixeira
         val botaoTrash = findViewById<ImageView>(R.id.trash)
         botaoTrash.setOnClickListener {
-            mostrarDialogoConfirmacaoApagar()
+            if (idUsuarioAtual != donoId) {
+                Toast.makeText(this, "Apenas o dono pode deletar esta nota!", Toast.LENGTH_SHORT).show()
+            } else {
+                mostrarDialogoConfirmacaoApagar()
+            }
         }
 
         // Configura o botão de usuários compartilhados
