@@ -58,6 +58,11 @@ class AmigosCompartilhadosActivity : AppCompatActivity() {
                 .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
                 .show()
         }
+
+        val btnVoltar = findViewById<android.widget.ImageButton>(R.id.btnVoltarNota)
+        btnVoltar.setOnClickListener {
+            finish()
+        }
     }
 
     private fun removerUsuario(usuario: UsuarioCompartilhado) {
