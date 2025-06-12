@@ -31,6 +31,7 @@
         <activity android:name=".Telanota"/>
         <activity android:name=".Telaperfil"/>
         <activity android:name=".Telachat"/>
+        <activity android:name=".AmigosCompartilhadosActivity" />
     </application>
 
 </manifest>

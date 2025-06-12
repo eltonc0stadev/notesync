@@ -23,6 +23,7 @@ class Telanota : AppCompatActivity() {
 
     private var idNota: Long? = null
     private var usuariosCompartilhadosIds: ArrayList<Long> = arrayListOf()
+    private var usuariosCompartilhados: ArrayList<UsuarioCompartilhado> = arrayListOf()
     private var notaAlterada: Boolean = false
 
     private lateinit var comunidade: ImageView
@@ -47,10 +48,10 @@ class Telanota : AppCompatActivity() {
         val conteudoRecebido = intent.getStringExtra("conteudo")?.let { decodificarConteudo(it) } ?: ""
         idNota = intent.getStringExtra("idNota")?.toLongOrNull()
 
-        // Recebe a lista de usuários compartilhados
+        // Recebe a lista de usuários compartilhados (id e nome)
         @Suppress("UNCHECKED_CAST")
-        intent.getSerializableExtra("usuariosCompartilhadosIds")?.let {
-            usuariosCompartilhadosIds = it as ArrayList<Long>
+        intent.getSerializableExtra("usuariosCompartilhadosList")?.let {
+            usuariosCompartilhados = it as ArrayList<UsuarioCompartilhado>
         }
 
         // Define o título e conteúdo nos campos
@@ -70,6 +71,14 @@ class Telanota : AppCompatActivity() {
         val botaoTrash = findViewById<ImageView>(R.id.trash)
         botaoTrash.setOnClickListener {
             mostrarDialogoConfirmacaoApagar()
+        }
+
+        // Configura o botão de usuários compartilhados
+        val botaoUsuariosCompartilhados = findViewById<ImageView>(R.id.usuariosCompartilhados)
+        botaoUsuariosCompartilhados.setOnClickListener {
+            val intent = Intent(this, com.example.treino1.AmigosCompartilhadosActivity::class.java)
+            intent.putExtra("usuariosCompartilhadosList", usuariosCompartilhados)
+            startActivity(intent)
         }
 
         // Detecta mudanças no conteúdo da nota

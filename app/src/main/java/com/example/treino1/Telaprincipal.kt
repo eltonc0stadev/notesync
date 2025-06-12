@@ -255,14 +255,19 @@ class Telaprincipal : AppCompatActivity() {
             intent.putExtra("titulo", titulo)
             intent.putExtra("conteudo", conteudoCodificado) // Mantém codificado para a Telanota decodificar
             intent.putExtra("idNota", idNota)
-            // Adiciona os IDs dos usuários compartilhados
-            nota.optJSONArray("usuariosCompartilhadosIds")?.let { idsArray ->
-                val ids = ArrayList<Long>()
-                for (i in 0 until idsArray.length()) {
-                    ids.add(idsArray.optLong(i))
+            // Adiciona os usuários compartilhados (id e nome)
+            val usuariosCompartilhados = ArrayList<UsuarioCompartilhado>()
+            nota.optJSONArray("usuariosCompartilhados")?.let { usuariosArray ->
+                for (i in 0 until usuariosArray.length()) {
+                    val usuarioObj = usuariosArray.optJSONObject(i)
+                    if (usuarioObj != null) {
+                        val idUsuario = usuarioObj.optLong("idUsuario")
+                        val nome = usuarioObj.optString("nome", "")
+                        usuariosCompartilhados.add(UsuarioCompartilhado(idUsuario, nome))
+                    }
                 }
-                intent.putExtra("usuariosCompartilhadosIds", ids)
             }
+            intent.putExtra("usuariosCompartilhadosList", usuariosCompartilhados)
             launcher.launch(intent)
         }
         // Favorito
