@@ -30,6 +30,8 @@ class Telanota : AppCompatActivity() {
     private lateinit var temachange: ImageView
     private lateinit var notificacao: ImageView
 
+    private val REQUEST_AMIGOS_COMPARTILHADOS = 1001
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.telanota)
@@ -79,7 +81,7 @@ class Telanota : AppCompatActivity() {
             val intent = Intent(this, com.example.treino1.AmigosCompartilhadosActivity::class.java)
             intent.putExtra("usuariosCompartilhadosList", usuariosCompartilhados)
             intent.putExtra("idNota", idNota ?: 0L)
-            startActivity(intent)
+            startActivityForResult(intent, REQUEST_AMIGOS_COMPARTILHADOS)
         }
 
         // Detecta mudanças no conteúdo da nota
@@ -235,6 +237,18 @@ class Telanota : AppCompatActivity() {
         if (notaAlterada && idNota != null) {
             println("Activity entrando em pausa, atualizando nota...")
             atualizarNotaApi()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_AMIGOS_COMPARTILHADOS && resultCode == RESULT_OK && data != null) {
+            @Suppress("UNCHECKED_CAST")
+            val novaLista = data.getSerializableExtra("usuariosCompartilhadosList") as? ArrayList<UsuarioCompartilhado>
+            if (novaLista != null) {
+                usuariosCompartilhados = novaLista
+                usuariosCompartilhadosIds = ArrayList(usuariosCompartilhados.map { it.idUsuario })
+            }
         }
     }
 }

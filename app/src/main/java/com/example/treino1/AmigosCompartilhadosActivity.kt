@@ -1,5 +1,6 @@
 package com.example.treino1
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -75,5 +76,12 @@ class AmigosCompartilhadosActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    override fun finish() {
+        val resultIntent = Intent()
+        resultIntent.putExtra("usuariosCompartilhadosList", amigos)
+        setResult(RESULT_OK, resultIntent)
+        super.finish()
     }
 }
